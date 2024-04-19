@@ -1,0 +1,1 @@
+These are scripts I have developed in order to further my knowledge of unix and bash scripting. Feel free to use any of these for your usage, all I ask is if your friends ask who made it tell them me.
