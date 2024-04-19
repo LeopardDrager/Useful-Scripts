@@ -1,7 +1,6 @@
 #!/bin/bash
 
-function scriptOver() { #just created function so I can just call it 
-	#This function resets everything once the previous functions are over
+function scriptOver() { #just created function so I can just call it. This function resets everything once the intial script is over.
 	echo "Returning everything to normal" 
 	sleep 2
 	clear
@@ -19,7 +18,7 @@ function scriptOver() { #just created function so I can just call it
 
 echo "Which interface would you like to put into monitor mode?"
 read interface
-if [[ `iwconfig|grep $interface` ]] &>/dev/null; then
+if [[ `iwconfig|grep $interface` ]] &>/dev/null; then #checking to make sure interface name is actually the name of an interface.
 	sleep 2
 	echo "Checking to make sure linux see's the network adapter ...... "
 	sleep 2
@@ -65,6 +64,8 @@ else
 fi
 
 
+
+# This is future stuff I would like to integrate into this script.
 
 
 #echo "Hello Would you like to run this program?"
