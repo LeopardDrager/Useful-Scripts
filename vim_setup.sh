@@ -17,9 +17,9 @@ if test -f /home/$username/vimrc.vimrc; then
     vimtxtDownloadStatus=1 #Setting the downloaded status to 1, as it is downloaded.
     $defualtSleep
 else
-    echo -e "Necesary dependency is not installed. 
-    I will install vimrc.txt in a little bit, but first I need to check if vim and curl is installed. \n" 
-    vimtxtDownloadStatus=0 #setting the downloaded status to 0, as it is not downloaded
+    echo -e "Necesary dependency is not installed (vimrc). 
+    I will install vimrc in a little bit, but first I need to check if vim and curl is installed. \n" 
+    vimtxtDownloadStatus=0 #setting the downloaded status to 0, as it is not downloaded.
     $defualtSleep
 fi
 
@@ -55,7 +55,7 @@ if dpkg -l | grep -q -i "git"; then #Checking for git
 else
     echo -e "Git is not installed, installing git now! \n"
     $defualtSleep
-    sudo apt install git-all -y
+    sudo apt install git-all -y > /dev/null 
     echo -e "Git is now installed! \n"
 fi
 
@@ -63,13 +63,12 @@ $defualtSleep
 
 echo -e "Now installing vim-plug (It will be installed in the recommended directory, look on vim-plug README for more info) \n"
 $defualtSleep
-sudo curl -fLo /home/$username/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim > /dev/null 2>&1
+curl -fLo /home/$username/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim > /dev/null 2>&1 #Pulling dependencies for vimrc config file
 
 if [ $vimtxtDownloadStatus -eq '0' ]; then 
     echo "Now downloading vimrc config file" 
     $defualtSleep
-    # curl -Lo ~/vimrc.txt 
+curl -fLo /home/$username/vimrc.vimrc https://gist.githubusercontent.com/LeopardDrager/b657cb0d2c0f78d2f4c9ab5ec316133a/raw
 fi
 
 
@@ -80,9 +79,13 @@ echo "First I'm going to put all the plugins and config options in your .vimrc f
 sleep 6
 
 
-cat /home/$username/vimrc.vimrc > /home/$username/.vimrc #Putting everything from vimrc.txt into the .vimrc file
-#Do plug install stuff
-
-
-
+cat /home/$username/vimrc.vimrc > /home/$username/.vimrc #Putting everything from vimrc.vimrc into the .vimrc file
+vim +'PlugInstall --sync' +qa #Installing all of the plugins via the terminal, rather than the vim editor.
+echo -e "All plugins are now installed! \n"
+echo "Now cleaning up"
+rm /home/$username/vimrc.vimrc #Removing the vimrc.vimrc file as it is no longer needed.
+echo "All done now. Goodbye!"
+sleep 3
+clear
+exit 0
 
