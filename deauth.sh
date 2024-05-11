@@ -45,9 +45,9 @@ if [[ `iwconfig|grep $interface` ]] &>/dev/null; then #checking to make sure int
 	
 	echo -e 'Pick an Option (1-3)\n'
  
-	echo -e '1.	Deauth with NO client MAC\n'
-	echo -e '2.	Deauth WITH client MAC\n'
-	echo -e '3.	Exit the program\n'
+	echo '1.	Deauth with NO client MAC'
+	echo '2.	Deauth WITH client MAC'
+	echo '3.	Exit the program'
 
 	
 	read response
