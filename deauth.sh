@@ -43,12 +43,13 @@ if [[ `iwconfig|grep $interface` ]] &>/dev/null; then #checking to make sure int
 	airodump-ng $interface -w myOutput --output-format csv & sleep 15
 	kill %1 #killing the previous command.
 	
-	
-	echo "1.	Deauth with NO client MAC\n"
-	echo "2.	Deauth WITH client MAC\n"
-	echo "3.	Exit the program\n"
+	echo -e 'Pick an Option (1-3)\n'
+ 
+	echo -e '1.	Deauth with NO client MAC\n'
+	echo -e '2.	Deauth WITH client MAC\n'
+	echo -e '3.	Exit the program\n'
 
-	echo "Pick an Option (1-3)"
+	
 	read response
 		
 	case $response in 
